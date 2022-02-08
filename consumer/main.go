@@ -41,13 +41,13 @@ func main() {
 	failOnError(err, "Failed to bind a queue")
 
 	msgs, err := ch.Consume(
-		"queueC2", // queue
-		"",        // consumer
-		true,      // auto-ack
-		false,     // exclusive
-		false,     // no-local
-		false,     // no-wait
-		nil,       // args
+		q.Name, // queue
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
 	)
 	failOnError(err, "Failed to register a consumer")
 
