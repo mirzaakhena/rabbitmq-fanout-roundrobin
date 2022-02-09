@@ -21,20 +21,33 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
+	exchange := "mirzaExchange"
+
+	err = ch.ExchangeDeclare(
+		exchange, // name
+		"topic",  // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
+	)
+	failOnError(err, "Failed to declare an exchange")
+
 	q, err := ch.QueueDeclare(
-		"queueC2", // name
-		false,     // durable
-		false,     // delete when unused
-		false,     // exclusive
-		false,     // no-wait
-		nil,       // arguments
+		"Q2",  // name
+		false, // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
 	err = ch.QueueBind(
-		q.Name,          // queue name
-		"",              // routing key
-		"mirzaExchange", // exchange
+		q.Name,               // queue name
+		"topic.payment.dana", // routing key
+		exchange,             // exchange
 		false,
 		nil,
 	)
@@ -55,10 +68,10 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			log.Printf("recv %s", d.Body)
 		}
 	}()
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	log.Printf("Waiting for messages")
 	<-forever
 }

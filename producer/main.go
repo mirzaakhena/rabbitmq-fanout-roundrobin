@@ -21,29 +21,16 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	{
-		err = ch.ExchangeDeclare(
-			"mirzaExchange", // name
-			"fanout",        // type
-			true,            // durable
-			false,           // auto-deleted
-			false,           // internal
-			false,           // no-wait
-			nil,             // arguments
-		)
-		failOnError(err, "Failed to declare an exchange")
-	}
-
 	body := "Hello World!"
 	err = ch.Publish(
-		"mirzaExchange", // exchange
-		"",              // routing key
-		false,           // mandatory
-		false,           // immediate
+		"mirzaExchange",      // exchange
+		"topic.payment.dana", // routing key
+		false,                // mandatory
+		false,                // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(body),
 		})
 	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s\n", body)
+	log.Printf("sent %s", body)
 }
